@@ -1,0 +1,18 @@
+name: kooboo
+services:
+  app:
+    image: 'kooboo/kooboo:latest'
+    container_name: kooboo-app
+    hostname: kooboo
+    restart: always
+    ports:
+      - '172.17.0.1:59080:80'
+    volumes:
+      - /var/lib/srv/$USER/docker/kooboo/kooboo/latest/rootfs/data/kooboo:/data
+    networks:
+      - kooboo
+
+networks:
+  kooboo:
+    name: kooboo
+    external: false
