@@ -1,0 +1,30 @@
+# nginx proxy address - http://172.17.0.1:59080
+
+name: kooboo
+x-logging: &default-logging
+  options:
+    max-size: '5m'
+    max-file: '1'
+  driver: json-file
+
+services:
+  app:
+    image: 'kooboo/kooboo:latest'
+    container_name: kooboo-app
+    hostname: ${BASE_HOST_NAME:-$HOSTNAME}
+    restart: always
+    pull_policy: always
+    logging: *default-logging
+    environment:
+      - TZ=${TZ:-America/New_York}
+    ports:
+      - '172.17.0.1:59080:80'
+    volumes:
+      - './rootfs/data/kooboo:/data'
+    networks:
+      - kooboo
+
+networks:
+  kooboo:
+    name: kooboo
+    external: false
