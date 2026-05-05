@@ -20,7 +20,7 @@ services:
     ports:
       - '172.17.0.1:59080:80'
     volumes:
-      - './rootfs/data/kooboo:/data'
+      - './volumes/data/kooboo:/data'
     networks:
       - kooboo
 
