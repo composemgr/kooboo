@@ -45,7 +45,7 @@ See `docker-compose.yaml` for complete list of configurable options.
 
 ## 📂 Volumes
 
-- `./rootfs/data/kooboo` - Data storage
+- `./volumes/data/kooboo` - Data storage
 
 ## 🔍 Logging
 
