@@ -17,14 +17,38 @@ services:
     logging: *default-logging
     environment:
       TZ: ${TZ:-America/New_York}
+      CONTAINER_NAME: kooboo-app
+      HOSTNAME: ${BASE_HOST_NAME:-$HOSTNAME}
     ports:
       - '172.17.0.1:59080:80'
     volumes:
       - './volumes/data/kooboo:/data'
     networks:
       - kooboo
+      - proxy
+      - cloudflare
+    labels:
+      - 'traefik.enable=true'
+      - 'cloudflare.enable=true'
+      - 'traefik.docker.network=proxy'
+      - 'cloudflare.service=http://kooboo-app:80'
+      - 'cloudflare.hostname=kooboo.${CLOUDFLARE_ZONE_NAME:-}'
+      - 'traefik.http.routers.kooboo-app.entrypoints=http'
+      - 'traefik.http.routers.kooboo-app-secure.tls=true'
+      - 'traefik.http.routers.kooboo-app.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.middlewares.kooboo-app-https-redirect.redirectscheme.scheme=https'
+      - 'traefik.http.routers.kooboo-app.middlewares=kooboo-app-https-redirect'
+      - 'traefik.http.routers.kooboo-app-secure.entrypoints=https'
+      - 'traefik.http.routers.kooboo-app-secure.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.routers.kooboo-app-secure.tls.certresolver=cloudflare'
+      - 'traefik.http.routers.kooboo-app-secure.service=kooboo-app'
+      - 'traefik.http.services.kooboo-app.loadbalancer.server.port=80'
 
 networks:
   kooboo:
     name: kooboo
     external: false
+  proxy:
+    external: true
+  cloudflare:
+    external: true
